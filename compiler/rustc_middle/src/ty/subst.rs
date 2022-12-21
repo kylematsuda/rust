@@ -574,7 +574,7 @@ impl<T> EarlyBinder<T> {
         EarlyBinder(value)
     }
 
-    /// TODO: Document
+    /// FIXME: Document
     ///
     /// This should probably explain the difference between
     /// [`subst_identity`] and [`skip_binder`]
@@ -582,7 +582,7 @@ impl<T> EarlyBinder<T> {
         self.0
     }
 
-    /// TODO: Document
+    /// FIXME: Document
     pub fn skip_binder(self) -> T {
         self.0
     }
