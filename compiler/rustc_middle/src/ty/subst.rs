@@ -573,6 +573,19 @@ impl<T> EarlyBinder<T> {
     pub fn rebind<U>(&self, value: U) -> EarlyBinder<U> {
         EarlyBinder(value)
     }
+
+    /// TODO: Document
+    ///
+    /// This should probably explain the difference between
+    /// [`subst_identity`] and [`skip_binder`]
+    pub fn subst_identity(self) -> T {
+        self.0
+    }
+
+    /// TODO: Document
+    pub fn skip_binder(self) -> T {
+        self.0
+    }
 }
 
 impl<T> EarlyBinder<Option<T>> {
