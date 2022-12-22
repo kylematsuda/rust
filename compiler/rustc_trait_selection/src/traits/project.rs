@@ -2359,7 +2359,7 @@ fn assoc_def(
     assoc_def_id: DefId,
 ) -> Result<specialization_graph::LeafDef, ErrorGuaranteed> {
     let tcx = selcx.tcx();
-    let trait_def_id = tcx.impl_trait_ref(impl_def_id).unwrap().def_id;
+    let trait_def_id = tcx.impl_trait_ref(impl_def_id).unwrap().subst_identity().def_id;
     let trait_def = tcx.trait_def(trait_def_id);
 
     // This function may be called while we are still building the

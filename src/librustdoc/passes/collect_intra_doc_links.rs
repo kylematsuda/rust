@@ -784,7 +784,8 @@ fn trait_impls_for<'a>(
 
         // Look at each trait implementation to see if it's an impl for `did`
         tcx.find_map_relevant_impl(trait_, ty, |impl_| {
-            let trait_ref = tcx.impl_trait_ref(impl_).expect("this is not an inherent impl");
+            let trait_ref =
+                tcx.impl_trait_ref(impl_).expect("this is not an inherent impl").subst_identity();
             // Check if these are the same type.
             let impl_type = trait_ref.self_ty();
             trace!(

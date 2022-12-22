@@ -47,7 +47,7 @@ trait ChildrenExt<'tcx> {
 impl<'tcx> ChildrenExt<'tcx> for Children {
     /// Insert an impl into this set of children without comparing to any existing impls.
     fn insert_blindly(&mut self, tcx: TyCtxt<'tcx>, impl_def_id: DefId) {
-        let trait_ref = tcx.impl_trait_ref(impl_def_id).unwrap();
+        let trait_ref = tcx.impl_trait_ref(impl_def_id).unwrap().subst_identity();
         if let Some(st) = fast_reject::simplify_type(tcx, trait_ref.self_ty(), TreatParams::AsInfer)
         {
             debug!("insert_blindly: impl_def_id={:?} st={:?}", impl_def_id, st);
@@ -62,7 +62,7 @@ impl<'tcx> ChildrenExt<'tcx> for Children {
     /// an impl with a parent. The impl must be present in the list of
     /// children already.
     fn remove_existing(&mut self, tcx: TyCtxt<'tcx>, impl_def_id: DefId) {
-        let trait_ref = tcx.impl_trait_ref(impl_def_id).unwrap();
+        let trait_ref = tcx.impl_trait_ref(impl_def_id).unwrap().subst_identity();
         let vec: &mut Vec<DefId>;
         if let Some(st) = fast_reject::simplify_type(tcx, trait_ref.self_ty(), TreatParams::AsInfer)
         {
@@ -180,7 +180,7 @@ impl<'tcx> ChildrenExt<'tcx> for Children {
             if le && !ge {
                 debug!(
                     "descending as child of TraitRef {:?}",
-                    tcx.impl_trait_ref(possible_sibling).unwrap()
+                    tcx.impl_trait_ref(possible_sibling).unwrap().subst_identity()
                 );
 
                 // The impl specializes `possible_sibling`.
@@ -188,7 +188,7 @@ impl<'tcx> ChildrenExt<'tcx> for Children {
             } else if ge && !le {
                 debug!(
                     "placing as parent of TraitRef {:?}",
-                    tcx.impl_trait_ref(possible_sibling).unwrap()
+                    tcx.impl_trait_ref(possible_sibling).unwrap().subst_identity()
                 );
 
                 replace_children.push(possible_sibling);
@@ -274,7 +274,7 @@ impl<'tcx> GraphExt<'tcx> for Graph {
     ) -> Result<Option<FutureCompatOverlapError<'tcx>>, OverlapError<'tcx>> {
         assert!(impl_def_id.is_local());
 
-        let trait_ref = tcx.impl_trait_ref(impl_def_id).unwrap();
+        let trait_ref = tcx.impl_trait_ref(impl_def_id).unwrap().subst_identity();
         let trait_def_id = trait_ref.def_id;
 
         debug!(

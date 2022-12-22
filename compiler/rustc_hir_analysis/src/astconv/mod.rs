@@ -1932,7 +1932,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
             (_, Res::SelfTyAlias { alias_to: impl_def_id, is_trait_impl: true, .. }) => {
                 // `Self` in an impl of a trait -- we have a concrete self type and a
                 // trait reference.
-                let Some(trait_ref) = tcx.impl_trait_ref(impl_def_id) else {
+                let Some(trait_ref) = tcx.impl_trait_ref(impl_def_id).map(|v| v.subst_identity()) else {
                     // A cycle error occurred, most likely.
                     let guar = tcx.sess.delay_span_bug(span, "expected cycle error");
                     return Err(guar);

@@ -129,7 +129,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                         // Provide the best span we can. Use the item, if local to crate, else
                         // the impl, if local to crate (item may be defaulted), else nothing.
                         let Some(item) = self.associated_value(impl_did, item_name).or_else(|| {
-                            let impl_trait_ref = self.tcx.impl_trait_ref(impl_did)?;
+                            let impl_trait_ref = self.tcx.impl_trait_ref(impl_did)?.subst_identity();
                             self.associated_value(impl_trait_ref.def_id, item_name)
                         }) else {
                             continue;
@@ -145,7 +145,11 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
 
                         let impl_ty = self.tcx.at(span).type_of(impl_did);
 
-                        let insertion = match self.tcx.impl_trait_ref(impl_did) {
+                        let insertion = match self
+                            .tcx
+                            .impl_trait_ref(impl_did)
+                            .map(ty::EarlyBinder::subst_identity)
+                        {
                             None => String::new(),
                             Some(trait_ref) => format!(
                                 " of the trait `{}`",
@@ -179,7 +183,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                             err.note(&note_str);
                         }
                         if let Some(sugg_span) = sugg_span
-                            && let Some(trait_ref) = self.tcx.impl_trait_ref(impl_did) {
+                            && let Some(trait_ref) = self.tcx.impl_trait_ref(impl_did).map(ty::EarlyBinder::subst_identity) {
                             let path = self.tcx.def_path_str(trait_ref.def_id);
 
                             let ty = match item.kind {
@@ -2499,7 +2503,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                             self.tcx.impl_polarity(*imp_did) == ty::ImplPolarity::Negative
                         })
                         .any(|imp_did| {
-                            let imp = self.tcx.impl_trait_ref(imp_did).unwrap();
+                            let imp = self.tcx.impl_trait_ref(imp_did).unwrap().subst_identity();
                             let imp_simp =
                                 simplify_type(self.tcx, imp.self_ty(), TreatParams::AsPlaceholder);
                             imp_simp.map_or(false, |s| s == simp_rcvr_ty)

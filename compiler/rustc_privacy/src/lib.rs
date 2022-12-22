@@ -337,7 +337,7 @@ trait VisibilityLike: Sized {
     ) -> Self {
         let mut find = FindMin { tcx, effective_visibilities, min: Self::MAX };
         find.visit(tcx.type_of(def_id));
-        if let Some(trait_ref) = tcx.impl_trait_ref(def_id) {
+        if let Some(trait_ref) = tcx.impl_trait_ref(def_id).map(ty::EarlyBinder::subst_identity) {
             find.visit_trait(trait_ref);
         }
         find.min
@@ -857,7 +857,9 @@ impl ReachEverythingInTheInterfaceVisitor<'_, '_> {
     }
 
     fn trait_ref(&mut self) -> &mut Self {
-        if let Some(trait_ref) = self.ev.tcx.impl_trait_ref(self.item_def_id) {
+        if let Some(trait_ref) =
+            self.ev.tcx.impl_trait_ref(self.item_def_id).map(ty::EarlyBinder::subst_identity)
+        {
             self.visit_trait(trait_ref);
         }
         self

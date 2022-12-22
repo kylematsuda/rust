@@ -23,7 +23,7 @@ fn assumed_wf_types<'tcx>(tcx: TyCtxt<'tcx>, def_id: DefId) -> &'tcx ty::List<Ty
         }
         DefKind::Impl => match tcx.impl_trait_ref(def_id) {
             Some(trait_ref) => {
-                let types: Vec<_> = trait_ref.substs.types().collect();
+                let types: Vec<_> = trait_ref.subst_identity().substs.types().collect();
                 tcx.intern_type_list(&types)
             }
             // Only the impl self type
