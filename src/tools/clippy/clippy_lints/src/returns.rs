@@ -280,6 +280,7 @@ fn last_statement_borrows<'tcx>(cx: &LateContext<'tcx>, expr: &'tcx Expr<'tcx>) 
                 .tcx
                 .fn_sig(def_id)
                 .skip_binder()
+                .skip_binder()
                 .output()
                 .walk()
                 .any(|arg| matches!(arg.unpack(), GenericArgKind::Lifetime(_)))

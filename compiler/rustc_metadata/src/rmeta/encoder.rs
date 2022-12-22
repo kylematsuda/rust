@@ -1109,7 +1109,7 @@ fn should_encode_trait_impl_trait_tys<'tcx>(tcx: TyCtxt<'tcx>, def_id: DefId) ->
     // of the trait fn to look for any RPITITs, but that's kinda doing a lot
     // of work. We can probably remove this when we refactor RPITITs to be
     // associated types.
-    tcx.fn_sig(trait_item_def_id).skip_binder().output().walk().any(|arg| {
+    tcx.fn_sig(trait_item_def_id).skip_binder().output().skip_binder().walk().any(|arg| {
         if let ty::GenericArgKind::Type(ty) = arg.unpack()
             && let ty::Alias(ty::Projection, data) = ty.kind()
             && tcx.def_kind(data.def_id) == DefKind::ImplTraitPlaceholder
@@ -1692,7 +1692,7 @@ impl<'a, 'tcx> EncodeContext<'a, 'tcx> {
             }
 
             ty::Closure(_, substs) => {
-                record!(self.tables.fn_sig[def_id.to_def_id()] <- substs.as_closure().sig());
+                record!(self.tables.fn_sig[def_id.to_def_id()] <- ty::EarlyBinder(substs.as_closure().sig()));
             }
 
             _ => bug!("closure that is neither generator nor closure"),

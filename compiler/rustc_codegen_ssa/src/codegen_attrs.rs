@@ -197,7 +197,7 @@ fn codegen_fn_attrs(tcx: TyCtxt<'_>, did: DefId) -> CodegenFnAttrs {
                 }
             }
         } else if attr.has_name(sym::cmse_nonsecure_entry) {
-            if !matches!(tcx.fn_sig(did).abi(), abi::Abi::C { .. }) {
+            if !matches!(tcx.fn_sig(did).skip_binder().abi(), abi::Abi::C { .. }) {
                 struct_span_err!(
                     tcx.sess,
                     attr.span,
@@ -214,7 +214,9 @@ fn codegen_fn_attrs(tcx: TyCtxt<'_>, did: DefId) -> CodegenFnAttrs {
         } else if attr.has_name(sym::thread_local) {
             codegen_fn_attrs.flags |= CodegenFnAttrFlags::THREAD_LOCAL;
         } else if attr.has_name(sym::track_caller) {
-            if !tcx.is_closure(did.to_def_id()) && tcx.fn_sig(did).abi() != abi::Abi::Rust {
+            if !tcx.is_closure(did.to_def_id())
+                && tcx.fn_sig(did).skip_binder().abi() != abi::Abi::Rust
+            {
                 struct_span_err!(tcx.sess, attr.span, E0737, "`#[track_caller]` requires Rust ABI")
                     .emit();
             }
@@ -245,7 +247,7 @@ fn codegen_fn_attrs(tcx: TyCtxt<'_>, did: DefId) -> CodegenFnAttrs {
             }
         } else if attr.has_name(sym::target_feature) {
             if !tcx.is_closure(did.to_def_id())
-                && tcx.fn_sig(did).unsafety() == hir::Unsafety::Normal
+                && tcx.fn_sig(did).skip_binder().unsafety() == hir::Unsafety::Normal
             {
                 if tcx.sess.target.is_like_wasm || tcx.sess.opts.actually_rustdoc {
                     // The `#[target_feature]` attribute is allowed on

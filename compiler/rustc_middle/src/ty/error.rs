@@ -826,7 +826,7 @@ fn foo(&self) -> Self::T { String::new() }
                 ty::AssocKind::Fn == item.kind && Some(**name) != current_method_ident
             })
             .filter_map(|(_, item)| {
-                let method = self.fn_sig(item.def_id);
+                let method = self.fn_sig(item.def_id).subst_identity();
                 match *method.output().skip_binder().kind() {
                     ty::Alias(ty::Projection, ty::AliasTy { def_id: item_def_id, .. })
                         if item_def_id == proj_ty_item_def_id =>

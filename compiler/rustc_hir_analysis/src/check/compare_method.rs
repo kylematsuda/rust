@@ -265,7 +265,7 @@ fn compare_predicate_entailment<'tcx>(
     let unnormalized_impl_sig = infcx.replace_bound_vars_with_fresh_vars(
         impl_m_span,
         infer::HigherRankedType,
-        tcx.fn_sig(impl_m.def_id),
+        tcx.fn_sig(impl_m.def_id).subst_identity(),
     );
     let unnormalized_impl_fty = tcx.mk_fn_ptr(ty::Binder::dummy(unnormalized_impl_sig));
 
@@ -421,7 +421,7 @@ fn compare_asyncness<'tcx>(
     trait_item_span: Option<Span>,
 ) -> Result<(), ErrorGuaranteed> {
     if tcx.asyncness(trait_m.def_id) == hir::IsAsync::Async {
-        match tcx.fn_sig(impl_m.def_id).skip_binder().output().kind() {
+        match tcx.fn_sig(impl_m.def_id).subst_identity().skip_binder().output().kind() {
             ty::Alias(ty::Opaque, ..) => {
                 // allow both `async fn foo()` and `fn foo() -> impl Future`
             }
@@ -488,7 +488,7 @@ pub fn collect_trait_impl_trait_tys<'tcx>(
         infcx.replace_bound_vars_with_fresh_vars(
             return_span,
             infer::HigherRankedType,
-            tcx.fn_sig(impl_m.def_id),
+            tcx.fn_sig(impl_m.def_id).subst_identity(),
         ),
     );
     impl_sig.error_reported()?;
@@ -981,7 +981,7 @@ fn compare_self_type<'tcx>(
             ty::ImplContainer => impl_trait_ref.self_ty(),
             ty::TraitContainer => tcx.types.self_param,
         };
-        let self_arg_ty = tcx.fn_sig(method.def_id).input(0);
+        let self_arg_ty = tcx.fn_sig(method.def_id).subst_identity().input(0);
         let param_env = ty::ParamEnv::reveal_all();
 
         let infcx = tcx.infer_ctxt().build();
@@ -1213,8 +1213,8 @@ fn compare_number_of_method_arguments<'tcx>(
     trait_m: &ty::AssocItem,
     trait_item_span: Option<Span>,
 ) -> Result<(), ErrorGuaranteed> {
-    let impl_m_fty = tcx.fn_sig(impl_m.def_id);
-    let trait_m_fty = tcx.fn_sig(trait_m.def_id);
+    let impl_m_fty = tcx.fn_sig(impl_m.def_id).subst_identity();
+    let trait_m_fty = tcx.fn_sig(trait_m.def_id).subst_identity();
     let trait_number_args = trait_m_fty.inputs().skip_binder().len();
     let impl_number_args = impl_m_fty.inputs().skip_binder().len();
     if trait_number_args != impl_number_args {

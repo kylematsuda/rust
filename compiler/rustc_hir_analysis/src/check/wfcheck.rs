@@ -382,7 +382,7 @@ fn check_gat_where_clauses(tcx: TyCtxt<'_>, associated_items: &[hir::TraitItemRe
                         // `Self::Iter<'a>` is a GAT we want to gather any potential missing bounds from.
                         let sig: ty::FnSig<'_> = tcx.liberate_late_bound_regions(
                             item_def_id.to_def_id(),
-                            tcx.fn_sig(item_def_id),
+                            tcx.fn_sig(item_def_id).subst_identity(),
                         );
                         gather_gat_bounds(
                             tcx,
@@ -1006,7 +1006,7 @@ fn check_associated_item(
                 wfcx.register_wf_obligation(span, loc, ty.into());
             }
             ty::AssocKind::Fn => {
-                let sig = tcx.fn_sig(item.def_id);
+                let sig = tcx.fn_sig(item.def_id).subst_identity();
                 let hir_sig = sig_if_method.expect("bad signature for method");
                 check_fn_or_method(
                     wfcx,
@@ -1191,7 +1191,7 @@ fn check_item_fn(
     decl: &hir::FnDecl<'_>,
 ) {
     enter_wf_checking_ctxt(tcx, span, def_id, |wfcx| {
-        let sig = tcx.fn_sig(def_id);
+        let sig = tcx.fn_sig(def_id).subst_identity();
         check_fn_or_method(wfcx, ident.span, sig, decl, def_id);
     })
 }
@@ -1634,7 +1634,7 @@ fn check_method_receiver<'tcx>(
 
     let span = fn_sig.decl.inputs[0].span;
 
-    let sig = tcx.fn_sig(method.def_id);
+    let sig = tcx.fn_sig(method.def_id).subst_identity();
     let sig = tcx.liberate_late_bound_regions(method.def_id, sig);
     let sig = wfcx.normalize(span, None, sig);
 

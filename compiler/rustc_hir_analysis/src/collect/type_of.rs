@@ -865,7 +865,9 @@ fn infer_placeholder_type<'a>(
             }
 
             match ty.kind() {
-                ty::FnDef(def_id, _) => self.tcx.mk_fn_ptr(self.tcx.fn_sig(*def_id)),
+                ty::FnDef(def_id, _) => {
+                    self.tcx.mk_fn_ptr(self.tcx.fn_sig(*def_id).subst_identity())
+                }
                 // FIXME: non-capturing closures should also suggest a function pointer
                 ty::Closure(..) | ty::Generator(..) => {
                     self.success = false;

@@ -669,7 +669,7 @@ impl Item {
             tcx: TyCtxt<'_>,
             asyncness: hir::IsAsync,
         ) -> hir::FnHeader {
-            let sig = tcx.fn_sig(def_id);
+            let sig = tcx.fn_sig(def_id).skip_binder();
             let constness =
                 if tcx.is_const_fn(def_id) && is_unstable_const_fn(tcx, def_id).is_none() {
                     hir::Constness::Const
@@ -680,7 +680,7 @@ impl Item {
         }
         let header = match *self.kind {
             ItemKind::ForeignFunctionItem(_) => {
-                let abi = tcx.fn_sig(self.item_id.as_def_id().unwrap()).abi();
+                let abi = tcx.fn_sig(self.item_id.as_def_id().unwrap()).skip_binder().abi();
                 hir::FnHeader {
                     unsafety: if abi == Abi::RustIntrinsic {
                         intrinsic_operation_unsafety(tcx, self.item_id.as_def_id().unwrap())
