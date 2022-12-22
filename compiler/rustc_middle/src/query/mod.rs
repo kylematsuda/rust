@@ -225,7 +225,7 @@ rustc_queries! {
     /// predicate gets in the way of some checks, which are intended
     /// to operate over only the actual where-clauses written by the
     /// user.)
-    query predicates_of(key: DefId) -> ty::GenericPredicates<'tcx> {
+    query predicates_of(key: DefId) -> ty::EarlyBinder<ty::GenericPredicates<'tcx>> {
         desc { |tcx| "computing predicates of `{}`", tcx.def_path_str(key) }
         cache_on_disk_if { key.is_local() }
     }

@@ -20,7 +20,10 @@ struct OnlySelfBounds(bool);
 /// Returns a list of all type predicates (explicit and implicit) for the definition with
 /// ID `def_id`. This includes all predicates returned by `predicates_defined_on`, plus
 /// `Self: Trait` predicates for traits.
-pub(super) fn predicates_of(tcx: TyCtxt<'_>, def_id: DefId) -> ty::GenericPredicates<'_> {
+pub(super) fn predicates_of(
+    tcx: TyCtxt<'_>,
+    def_id: DefId,
+) -> ty::EarlyBinder<ty::GenericPredicates<'_>> {
     let mut result = tcx.predicates_defined_on(def_id);
 
     if tcx.is_trait(def_id) {
@@ -56,7 +59,7 @@ pub(super) fn predicates_of(tcx: TyCtxt<'_>, def_id: DefId) -> ty::GenericPredic
             ))));
     }
     debug!("predicates_of(def_id={:?}) = {:?}", def_id, result);
-    result
+    ty::EarlyBinder(result)
 }
 
 /// Returns a list of user-specified type predicates for the definition with ID `def_id`.
