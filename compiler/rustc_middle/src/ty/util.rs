@@ -648,11 +648,6 @@ impl<'tcx> TyCtxt<'tcx> {
         ty::EarlyBinder(self.collect_trait_impl_trait_tys(def_id))
     }
 
-    // FIXME: remove
-    pub fn bound_fn_sig(self, def_id: DefId) -> ty::EarlyBinder<ty::PolyFnSig<'tcx>> {
-        self.fn_sig(def_id)
-    }
-
     pub fn bound_impl_trait_ref(
         self,
         def_id: DefId,
