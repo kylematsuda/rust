@@ -464,7 +464,8 @@ fn subst_and_check_impossible_predicates<'tcx>(
 ) -> bool {
     debug!("subst_and_check_impossible_predicates(key={:?})", key);
 
-    let mut predicates = tcx.predicates_of(key.0).instantiate(tcx, key.1).predicates;
+    let mut predicates =
+        tcx.predicates_of(key.0).subst_identity().instantiate(tcx, key.1).predicates;
 
     // Specifically check trait fulfillment to avoid an error when trying to resolve
     // associated items.
@@ -526,7 +527,7 @@ fn is_impossible_method<'tcx>(
     }
 
     let generics = tcx.generics_of(trait_item_def_id);
-    let predicates = tcx.predicates_of(trait_item_def_id);
+    let predicates = tcx.predicates_of(trait_item_def_id).subst_identity();
     let impl_trait_ref =
         tcx.impl_trait_ref(impl_def_id).expect("expected impl to correspond to trait");
     let param_env = tcx.param_env(impl_def_id);

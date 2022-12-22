@@ -340,7 +340,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
         def_id: DefId,
         substs: SubstsRef<'tcx>,
     ) -> (ty::InstantiatedPredicates<'tcx>, Vec<Span>) {
-        let bounds = self.tcx.predicates_of(def_id);
+        let bounds = self.tcx.predicates_of(def_id).subst_identity();
         let spans: Vec<Span> = bounds.predicates.iter().map(|(_, span)| *span).collect();
         let result = bounds.instantiate(self.tcx, substs);
         let result = self.normalize(span, result);

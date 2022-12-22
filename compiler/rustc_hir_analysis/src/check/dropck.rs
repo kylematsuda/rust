@@ -28,7 +28,7 @@ use rustc_middle::ty::{self, Predicate, Ty, TyCtxt};
 ///
 pub fn check_drop_impl(tcx: TyCtxt<'_>, drop_impl_did: DefId) -> Result<(), ErrorGuaranteed> {
     let dtor_self_type = tcx.type_of(drop_impl_did);
-    let dtor_predicates = tcx.predicates_of(drop_impl_did);
+    let dtor_predicates = tcx.predicates_of(drop_impl_did).subst_identity();
     match dtor_self_type.kind() {
         ty::Adt(adt_def, self_to_impl_substs) => {
             ensure_drop_params_and_item_params_correspond(
@@ -139,7 +139,7 @@ fn ensure_drop_predicates_are_implied_by_item_defn<'tcx>(
 
     // We can assume the predicates attached to struct/enum definition
     // hold.
-    let generic_assumptions = tcx.predicates_of(self_type_did);
+    let generic_assumptions = tcx.predicates_of(self_type_did).subst_identity();
 
     let assumptions_in_impl_context = generic_assumptions.instantiate(tcx, &self_to_impl_substs);
     let assumptions_in_impl_context = assumptions_in_impl_context.predicates;

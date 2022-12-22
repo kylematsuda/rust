@@ -497,7 +497,7 @@ fn param_env_for_derived_eq(tcx: TyCtxt<'_>, did: DefId, eq_trait_id: DefId) -> 
         .map(|p| (p, matches!(p.kind, GenericParamDefKind::Type { .. })))
         .collect::<Vec<_>>();
 
-    let ty_predicates = tcx.predicates_of(did).predicates;
+    let ty_predicates = tcx.predicates_of(did).subst_identity().predicates;
     for (p, _) in ty_predicates {
         if let PredicateKind::Clause(Clause::Trait(p)) = p.kind().skip_binder()
             && p.trait_ref.def_id == eq_trait_id

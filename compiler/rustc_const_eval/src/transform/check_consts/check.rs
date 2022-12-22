@@ -752,7 +752,8 @@ impl<'tcx> Visitor<'tcx> for Checker<'_, 'tcx> {
                         let infcx = tcx.infer_ctxt().build();
                         let ocx = ObligationCtxt::new(&infcx);
 
-                        let predicates = tcx.predicates_of(callee).instantiate(tcx, substs);
+                        let predicates =
+                            tcx.predicates_of(callee).subst_identity().instantiate(tcx, substs);
                         let hir_id = tcx
                             .hir()
                             .local_def_id_to_hir_id(self.body.source.def_id().expect_local());

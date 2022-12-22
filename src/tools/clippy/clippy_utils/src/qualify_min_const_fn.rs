@@ -23,7 +23,7 @@ pub fn is_min_const_fn<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>, msrv: &Msrv) 
     let def_id = body.source.def_id();
     let mut current = def_id;
     loop {
-        let predicates = tcx.predicates_of(current);
+        let predicates = tcx.predicates_of(current).subst_identity();
         for (predicate, _) in predicates.predicates {
             match predicate.kind().skip_binder() {
                 ty::PredicateKind::Clause(

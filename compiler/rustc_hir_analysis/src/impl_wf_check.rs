@@ -84,7 +84,7 @@ fn enforce_impl_params_are_constrained(tcx: TyCtxt<'_>, impl_def_id: LocalDefId)
         return;
     }
     let impl_generics = tcx.generics_of(impl_def_id);
-    let impl_predicates = tcx.predicates_of(impl_def_id);
+    let impl_predicates = tcx.predicates_of(impl_def_id).subst_identity();
     let impl_trait_ref = tcx.impl_trait_ref(impl_def_id);
 
     let mut input_parameters = cgp::parameters_for_impl(impl_self_ty, impl_trait_ref);

@@ -368,7 +368,7 @@ impl<'tcx> GenericPredicates<'tcx> {
         substs: SubstsRef<'tcx>,
     ) {
         if let Some(def_id) = self.parent {
-            tcx.predicates_of(def_id).instantiate_into(tcx, instantiated, substs);
+            tcx.predicates_of(def_id).subst_identity().instantiate_into(tcx, instantiated, substs);
         }
         instantiated
             .predicates
@@ -388,7 +388,7 @@ impl<'tcx> GenericPredicates<'tcx> {
         instantiated: &mut InstantiatedPredicates<'tcx>,
     ) {
         if let Some(def_id) = self.parent {
-            tcx.predicates_of(def_id).instantiate_identity_into(tcx, instantiated);
+            tcx.predicates_of(def_id).subst_identity().instantiate_identity_into(tcx, instantiated);
         }
         instantiated.predicates.extend(self.predicates.iter().map(|(p, _)| p));
         instantiated.spans.extend(self.predicates.iter().map(|(_, s)| s));

@@ -847,7 +847,7 @@ impl ReachEverythingInTheInterfaceVisitor<'_, '_> {
     }
 
     fn predicates(&mut self) -> &mut Self {
-        self.visit_predicates(self.ev.tcx.predicates_of(self.item_def_id));
+        self.visit_predicates(self.ev.tcx.predicates_of(self.item_def_id).subst_identity());
         self
     }
 

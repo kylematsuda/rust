@@ -428,7 +428,8 @@ impl<'a, 'b, 'tcx> Visitor<'tcx> for TypeVerifier<'a, 'b, 'tcx> {
                 // const_trait_impl: use a non-const param env when checking that a FnDef type is well formed.
                 // this is because the well-formedness of the function does not need to be proved to have `const`
                 // impls for trait bounds.
-                let instantiated_predicates = tcx.predicates_of(def_id).instantiate(tcx, substs);
+                let instantiated_predicates =
+                    tcx.predicates_of(def_id).subst_identity().instantiate(tcx, substs);
                 let prev = self.cx.param_env;
                 self.cx.param_env = prev.without_const();
                 self.cx.normalize_and_prove_instantiated_predicates(
@@ -2562,7 +2563,7 @@ impl<'a, 'tcx> TypeChecker<'a, 'tcx> {
 
         let (def_id, instantiated_predicates) = match *aggregate_kind {
             AggregateKind::Adt(adt_did, _, substs, _, _) => {
-                (adt_did, tcx.predicates_of(adt_did).instantiate(tcx, substs))
+                (adt_did, tcx.predicates_of(adt_did).subst_identity().instantiate(tcx, substs))
             }
 
             // For closures, we have some **extra requirements** we
@@ -2655,7 +2656,7 @@ impl<'a, 'tcx> TypeChecker<'a, 'tcx> {
             );
         }
 
-        tcx.predicates_of(def_id).instantiate(tcx, substs)
+        tcx.predicates_of(def_id).subst_identity().instantiate(tcx, substs)
     }
 
     #[instrument(skip(self, body), level = "debug")]

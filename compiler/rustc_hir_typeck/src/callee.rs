@@ -373,7 +373,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                 // `#[rustc_evaluate_where_clauses]` trigger special output
                 // to let us test the trait evaluation system.
                 if self.tcx.has_attr(def_id, sym::rustc_evaluate_where_clauses) {
-                    let predicates = self.tcx.predicates_of(def_id);
+                    let predicates = self.tcx.predicates_of(def_id).subst_identity();
                     let predicates = predicates.instantiate(self.tcx, subst);
                     for (predicate, predicate_span) in
                         predicates.predicates.iter().zip(&predicates.spans)

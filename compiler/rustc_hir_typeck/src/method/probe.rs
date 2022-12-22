@@ -1514,7 +1514,7 @@ impl<'a, 'tcx> ProbeContext<'a, 'tcx> {
 
                     // Check whether the impl imposes obligations we have to worry about.
                     let impl_def_id = probe.item.container_id(self.tcx);
-                    let impl_bounds = self.tcx.predicates_of(impl_def_id);
+                    let impl_bounds = self.tcx.predicates_of(impl_def_id).subst_identity();
                     let impl_bounds = impl_bounds.instantiate(self.tcx, substs);
 
                     let InferOk { value: impl_bounds, obligations: norm_obligations } =

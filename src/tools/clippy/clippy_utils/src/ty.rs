@@ -552,7 +552,7 @@ pub fn all_predicates_of(tcx: TyCtxt<'_>, id: DefId) -> impl Iterator<Item = &(P
     let mut next_id = Some(id);
     iter::from_fn(move || {
         next_id.take().map(|id| {
-            let preds = tcx.predicates_of(id);
+            let preds = tcx.predicates_of(id).subst_identity();
             next_id = preds.parent;
             preds.predicates.iter()
         })

@@ -2257,7 +2257,7 @@ fn confirm_impl_trait_in_trait_candidate<'tcx>(
         obligation.param_env,
         cause.clone(),
         obligation.recursion_depth + 1,
-        tcx.predicates_of(impl_fn_def_id).instantiate(tcx, impl_fn_substs),
+        tcx.predicates_of(impl_fn_def_id).subst_identity().instantiate(tcx, impl_fn_substs),
         &mut obligations,
     );
     obligations.extend(std::iter::zip(predicates.predicates, predicates.spans).map(
@@ -2306,6 +2306,7 @@ fn assoc_ty_own_obligations<'cx, 'tcx>(
     let tcx = selcx.tcx();
     let own = tcx
         .predicates_of(obligation.predicate.def_id)
+        .subst_identity()
         .instantiate_own(tcx, obligation.predicate.substs);
     for (predicate, span) in std::iter::zip(own.predicates, own.spans) {
         let normalized = normalize_with_depth_to(

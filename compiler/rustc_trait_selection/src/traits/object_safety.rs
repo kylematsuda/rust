@@ -261,7 +261,7 @@ fn predicates_reference_self(
     let predicates = if supertraits_only {
         tcx.super_predicates_of(trait_def_id)
     } else {
-        tcx.predicates_of(trait_def_id)
+        tcx.predicates_of(trait_def_id).subst_identity()
     };
     predicates
         .predicates
@@ -333,7 +333,7 @@ fn generics_require_sized_self(tcx: TyCtxt<'_>, def_id: DefId) -> bool {
     };
 
     // Search for a predicate like `Self : Sized` amongst the trait bounds.
-    let predicates = tcx.predicates_of(def_id);
+    let predicates = tcx.predicates_of(def_id).subst_identity();
     let predicates = predicates.instantiate_identity(tcx).predicates;
     elaborate_predicates(tcx, predicates.into_iter()).any(|obligation| {
         match obligation.predicate.kind().skip_binder() {
@@ -531,6 +531,7 @@ fn virtual_call_violation_for_method<'tcx>(
     // hard error.
     if tcx
         .predicates_of(method.def_id)
+        .subst_identity()
         .predicates
         .iter()
         // A trait object can't claim to live more than the concrete type,

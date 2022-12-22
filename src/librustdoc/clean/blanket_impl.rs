@@ -64,6 +64,7 @@ impl<'a, 'tcx> BlanketImplFinder<'a, 'tcx> {
                 let predicates = cx
                     .tcx
                     .predicates_of(impl_def_id)
+                    .subst_identity()
                     .instantiate(cx.tcx, impl_substs)
                     .predicates
                     .into_iter()

@@ -1675,7 +1675,7 @@ impl<'tcx> LateLintPass<'tcx> for TrivialConstraints {
         use rustc_middle::ty::PredicateKind::*;
 
         if cx.tcx.features().trivial_bounds {
-            let predicates = cx.tcx.predicates_of(item.owner_id);
+            let predicates = cx.tcx.predicates_of(item.owner_id).subst_identity();
             for &(predicate, span) in predicates.predicates {
                 let predicate_kind_name = match predicate.kind().skip_binder() {
                     Clause(Clause::Trait(..)) => "trait",

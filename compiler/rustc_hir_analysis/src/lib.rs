@@ -255,7 +255,7 @@ fn check_main_fn_ty(tcx: TyCtxt<'_>, main_def_id: DefId) {
     let mut error = false;
     let main_diagnostics_hir_id = main_fn_diagnostics_hir_id(tcx, main_def_id, main_span);
     let main_fn_generics = tcx.generics_of(main_def_id);
-    let main_fn_predicates = tcx.predicates_of(main_def_id);
+    let main_fn_predicates = tcx.predicates_of(main_def_id).subst_identity();
     if main_fn_generics.count() != 0 || !main_fnsig.bound_vars().is_empty() {
         let generics_param_span = main_fn_generics_params_span(tcx, main_def_id);
         let msg = "`main` function is not allowed to have generic \

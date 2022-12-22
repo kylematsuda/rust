@@ -447,7 +447,7 @@ fn suggestion_signature(assoc: &ty::AssocItem, tcx: TyCtxt<'_>) -> String {
                 tcx,
                 tcx.fn_sig(assoc.def_id).subst_identity().skip_binder(),
                 assoc.ident(tcx),
-                tcx.predicates_of(assoc.def_id),
+                tcx.predicates_of(assoc.def_id).subst_identity(),
                 assoc,
             )
         }

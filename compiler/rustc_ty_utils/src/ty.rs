@@ -52,7 +52,7 @@ fn sized_constraint_for_ty<'tcx>(
             let sized_predicate = ty::Binder::dummy(tcx.mk_trait_ref(sized_trait, [ty]))
                 .without_const()
                 .to_predicate(tcx);
-            let predicates = tcx.predicates_of(adtdef.did()).predicates;
+            let predicates = tcx.predicates_of(adtdef.did()).subst_identity().predicates;
             if predicates.iter().any(|(p, _)| *p == sized_predicate) { vec![] } else { vec![ty] }
         }
 
@@ -107,7 +107,7 @@ fn adt_sized_constraint(tcx: TyCtxt<'_>, def_id: DefId) -> &[Ty<'_>] {
 fn param_env(tcx: TyCtxt<'_>, def_id: DefId) -> ty::ParamEnv<'_> {
     // Compute the bounds on Self and the type parameters.
     let ty::InstantiatedPredicates { mut predicates, .. } =
-        tcx.predicates_of(def_id).instantiate_identity(tcx);
+        tcx.predicates_of(def_id).subst_identity().instantiate_identity(tcx);
 
     // Finally, we have to normalize the bounds in the environment, in
     // case they contain any associated type projections. This process
@@ -241,7 +241,7 @@ fn well_formed_types_in_env<'tcx>(
 
     // Compute the bounds on `Self` and the type parameters.
     let ty::InstantiatedPredicates { predicates, .. } =
-        tcx.predicates_of(def_id).instantiate_identity(tcx);
+        tcx.predicates_of(def_id).subst_identity().instantiate_identity(tcx);
 
     let clauses = predicates.into_iter();
 
@@ -381,7 +381,7 @@ fn issue33140_self_ty(tcx: TyCtxt<'_>, def_id: DefId) -> Option<Ty<'_>> {
         return None;
     }
 
-    let predicates = tcx.predicates_of(def_id);
+    let predicates = tcx.predicates_of(def_id).subst_identity();
     if predicates.parent.is_some() || !predicates.predicates.is_empty() {
         debug!("issue33140_self_ty - impl has predicates {:?}!", predicates);
         return None;

@@ -233,7 +233,7 @@ pub(crate) fn build_external_trait(cx: &mut DocContext<'_>, did: DefId) -> clean
         .map(|item| clean_middle_assoc_item(item, cx))
         .collect();
 
-    let predicates = cx.tcx.predicates_of(did);
+    let predicates = cx.tcx.predicates_of(did).subst_identity();
     let generics = clean_ty_generics(cx, cx.tcx.generics_of(did), predicates);
     let generics = filter_non_trait_generics(did, generics);
     let (generics, supertrait_bounds) = separate_supertrait_bounds(generics);

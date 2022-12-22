@@ -72,7 +72,8 @@ pub fn type_op_ascribe_user_type_with_span<'tcx>(
     // Also, normalize the `instantiated_predicates`
     // because otherwise we wind up with duplicate "type
     // outlives" error messages.
-    let instantiated_predicates = tcx.predicates_of(def_id).instantiate(tcx, substs);
+    let instantiated_predicates =
+        tcx.predicates_of(def_id).subst_identity().instantiate(tcx, substs);
 
     debug!(?instantiated_predicates);
     for (instantiated_predicate, predicate_span) in

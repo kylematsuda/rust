@@ -2096,6 +2096,7 @@ pub fn fn_has_unsatisfiable_preds(cx: &LateContext<'_>, did: DefId) -> bool {
     let predicates = cx
         .tcx
         .predicates_of(did)
+        .subst_identity()
         .predicates
         .iter()
         .filter_map(|(p, _)| if p.is_global() { Some(*p) } else { None });

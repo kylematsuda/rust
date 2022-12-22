@@ -362,7 +362,7 @@ impl<'tcx> AdtDef<'tcx> {
 
     #[inline]
     pub fn predicates(self, tcx: TyCtxt<'tcx>) -> GenericPredicates<'tcx> {
-        tcx.predicates_of(self.did())
+        tcx.predicates_of(self.did()).subst_identity()
     }
 
     /// Returns an iterator over all fields contained

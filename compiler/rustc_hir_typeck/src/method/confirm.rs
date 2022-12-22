@@ -97,7 +97,11 @@ impl<'a, 'tcx> ConfirmContext<'a, 'tcx> {
         let filler_substs = rcvr_substs
             .extend_to(self.tcx, pick.item.def_id, |def, _| self.tcx.mk_param_from_def(def));
         let illegal_sized_bound = self.predicates_require_illegal_sized_bound(
-            &self.tcx.predicates_of(pick.item.def_id).instantiate(self.tcx, filler_substs),
+            &self
+                .tcx
+                .predicates_of(pick.item.def_id)
+                .subst_identity()
+                .instantiate(self.tcx, filler_substs),
         );
 
         // Unify the (adjusted) self type with what the method expects.
@@ -456,7 +460,8 @@ impl<'a, 'tcx> ConfirmContext<'a, 'tcx> {
         // type/early-bound-regions substitutions performed. There can
         // be no late-bound regions appearing here.
         let def_id = pick.item.def_id;
-        let method_predicates = self.tcx.predicates_of(def_id).instantiate(self.tcx, all_substs);
+        let method_predicates =
+            self.tcx.predicates_of(def_id).subst_identity().instantiate(self.tcx, all_substs);
 
         debug!("method_predicates after subst = {:?}", method_predicates);
 

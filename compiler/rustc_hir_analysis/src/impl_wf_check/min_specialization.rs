@@ -204,7 +204,7 @@ fn unconstrained_parent_impl_substs<'tcx>(
     impl_def_id: DefId,
     impl_substs: SubstsRef<'tcx>,
 ) -> Vec<GenericArg<'tcx>> {
-    let impl_generic_predicates = tcx.predicates_of(impl_def_id);
+    let impl_generic_predicates = tcx.predicates_of(impl_def_id).subst_identity();
     let mut unconstrained_parameters = FxHashSet::default();
     let mut constrained_params = FxHashSet::default();
     let impl_trait_ref = tcx.impl_trait_ref(impl_def_id);
@@ -318,7 +318,8 @@ fn check_predicates<'tcx>(
     impl2_substs: SubstsRef<'tcx>,
     span: Span,
 ) {
-    let instantiated = tcx.predicates_of(impl1_def_id).instantiate(tcx, impl1_substs);
+    let instantiated =
+        tcx.predicates_of(impl1_def_id).subst_identity().instantiate(tcx, impl1_substs);
     let impl1_predicates: Vec<_> = traits::elaborate_predicates_with_span(
         tcx,
         std::iter::zip(
@@ -338,6 +339,7 @@ fn check_predicates<'tcx>(
         traits::elaborate_predicates(
             tcx,
             tcx.predicates_of(impl2_node.def_id())
+                .subst_identity()
                 .instantiate(tcx, impl2_substs)
                 .predicates
                 .into_iter(),

@@ -1811,7 +1811,7 @@ fn check_variances_for_type_defn<'tcx>(
         return;
     }
 
-    let ty_predicates = tcx.predicates_of(item.owner_id);
+    let ty_predicates = tcx.predicates_of(item.owner_id).subst_identity();
     assert_eq!(ty_predicates.parent, None);
     let variances = tcx.variances_of(item.owner_id);
 
@@ -1902,7 +1902,8 @@ impl<'tcx> WfCheckingCtxt<'_, 'tcx> {
         let empty_env = ty::ParamEnv::empty();
 
         let def_id = tcx.hir().local_def_id(self.body_id);
-        let predicates_with_span = tcx.predicates_of(def_id).predicates.iter().copied();
+        let predicates_with_span =
+            tcx.predicates_of(def_id).subst_identity().predicates.iter().copied();
         // Check elaborated bounds.
         let implied_obligations = traits::elaborate_predicates_with_span(tcx, predicates_with_span);
 

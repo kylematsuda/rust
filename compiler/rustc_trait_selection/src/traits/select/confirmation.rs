@@ -183,7 +183,8 @@ impl<'cx, 'tcx> SelectionContext<'cx, 'tcx> {
         })?);
 
         if let ty::Alias(ty::Projection, ..) = placeholder_self_ty.kind() {
-            let predicates = tcx.predicates_of(def_id).instantiate_own(tcx, substs).predicates;
+            let predicates =
+                tcx.predicates_of(def_id).subst_identity().instantiate_own(tcx, substs).predicates;
             debug!(?predicates, "projection predicates");
             for predicate in predicates {
                 let normalized = normalize_with_depth_to(

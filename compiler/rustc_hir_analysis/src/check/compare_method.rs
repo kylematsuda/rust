@@ -184,8 +184,8 @@ fn compare_predicate_entailment<'tcx>(
         impl_to_placeholder_substs.rebase_onto(tcx, impl_m.container_id(tcx), trait_to_impl_substs);
     debug!("compare_impl_method: trait_to_placeholder_substs={:?}", trait_to_placeholder_substs);
 
-    let impl_m_predicates = tcx.predicates_of(impl_m.def_id);
-    let trait_m_predicates = tcx.predicates_of(trait_m.def_id);
+    let impl_m_predicates = tcx.predicates_of(impl_m.def_id).subst_identity();
+    let trait_m_predicates = tcx.predicates_of(trait_m.def_id).subst_identity();
 
     // Check region bounds.
     check_region_bounds_on_impl_item(tcx, impl_m, trait_m, false)?;
@@ -195,7 +195,7 @@ fn compare_predicate_entailment<'tcx>(
     // environment. We can't just use `impl_env.caller_bounds`,
     // however, because we want to replace all late-bound regions with
     // region variables.
-    let impl_predicates = tcx.predicates_of(impl_m_predicates.parent.unwrap());
+    let impl_predicates = tcx.predicates_of(impl_m_predicates.parent.unwrap()).subst_identity();
     let mut hybrid_preds = impl_predicates.instantiate_identity(tcx);
 
     debug!("compare_impl_method: impl_bounds={:?}", hybrid_preds);
@@ -1658,8 +1658,8 @@ fn compare_type_predicate_entailment<'tcx>(
     let trait_to_impl_substs =
         impl_substs.rebase_onto(tcx, impl_ty.container_id(tcx), impl_trait_ref.substs);
 
-    let impl_ty_predicates = tcx.predicates_of(impl_ty.def_id);
-    let trait_ty_predicates = tcx.predicates_of(trait_ty.def_id);
+    let impl_ty_predicates = tcx.predicates_of(impl_ty.def_id).subst_identity();
+    let trait_ty_predicates = tcx.predicates_of(trait_ty.def_id).subst_identity();
 
     check_region_bounds_on_impl_item(tcx, impl_ty, trait_ty, false)?;
 
@@ -1678,7 +1678,7 @@ fn compare_type_predicate_entailment<'tcx>(
 
     // The predicates declared by the impl definition, the trait and the
     // associated type in the trait are assumed.
-    let impl_predicates = tcx.predicates_of(impl_ty_predicates.parent.unwrap());
+    let impl_predicates = tcx.predicates_of(impl_ty_predicates.parent.unwrap()).subst_identity();
     let mut hybrid_preds = impl_predicates.instantiate_identity(tcx);
     hybrid_preds
         .predicates

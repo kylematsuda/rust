@@ -23,7 +23,7 @@ impl<'tcx> ExplicitPredicatesMap<'tcx> {
             let predicates = if def_id.is_local() {
                 tcx.explicit_predicates_of(def_id)
             } else {
-                tcx.predicates_of(def_id)
+                tcx.predicates_of(def_id).subst_identity()
             };
             let mut required_predicates = RequiredPredicates::default();
 

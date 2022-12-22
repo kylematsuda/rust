@@ -36,7 +36,8 @@ pub fn recompute_applicable_impls<'tcx>(
             return false;
         }
 
-        let impl_predicates = tcx.predicates_of(impl_def_id).instantiate(tcx, impl_substs);
+        let impl_predicates =
+            tcx.predicates_of(impl_def_id).subst_identity().instantiate(tcx, impl_substs);
         ocx.register_obligations(impl_predicates.predicates.iter().map(|&predicate| {
             Obligation::new(tcx, ObligationCause::dummy(), param_env, predicate)
         }));
@@ -80,8 +81,10 @@ pub fn recompute_applicable_impls<'tcx>(
         },
     );
 
-    let predicates =
-        tcx.predicates_of(obligation.cause.body_id.owner.to_def_id()).instantiate_identity(tcx);
+    let predicates = tcx
+        .predicates_of(obligation.cause.body_id.owner.to_def_id())
+        .subst_identity()
+        .instantiate_identity(tcx);
     for obligation in
         elaborate_predicates_with_span(tcx, std::iter::zip(predicates.predicates, predicates.spans))
     {

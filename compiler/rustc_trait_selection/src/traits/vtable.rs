@@ -260,7 +260,8 @@ fn vtable_entries<'tcx>(
                     // do not hold for this particular set of type parameters.
                     // Note that this method could then never be called, so we
                     // do not want to try and codegen it, in that case (see #23435).
-                    let predicates = tcx.predicates_of(def_id).instantiate_own(tcx, substs);
+                    let predicates =
+                        tcx.predicates_of(def_id).subst_identity().instantiate_own(tcx, substs);
                     if impossible_predicates(tcx, predicates.predicates) {
                         debug!("vtable_entries: predicates do not hold");
                         return VtblEntry::Vacant;

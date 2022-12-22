@@ -93,6 +93,7 @@ impl<'tcx> MirLint<'tcx> for ConstProp {
         // it's usually never invoked in this way.
         let predicates = tcx
             .predicates_of(def_id.to_def_id())
+            .subst_identity()
             .predicates
             .iter()
             .filter_map(|(p, _)| if p.is_global() { Some(*p) } else { None });

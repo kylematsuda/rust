@@ -724,11 +724,11 @@ impl<'tcx> WfPredicates<'tcx> {
         substs: SubstsRef<'tcx>,
         remap_constness: bool,
     ) -> Vec<traits::PredicateObligation<'tcx>> {
-        let predicates = self.tcx.predicates_of(def_id);
+        let predicates = self.tcx.predicates_of(def_id).subst_identity();
         let mut origins = vec![def_id; predicates.predicates.len()];
         let mut head = predicates;
         while let Some(parent) = head.parent {
-            head = self.tcx.predicates_of(parent);
+            head = self.tcx.predicates_of(parent).subst_identity();
             origins.extend(iter::repeat(parent).take(head.predicates.len()));
         }
 
