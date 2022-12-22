@@ -662,14 +662,6 @@ impl<'tcx> TyCtxt<'tcx> {
         ty::EarlyBinder(self.explicit_item_bounds(def_id))
     }
 
-    // TODO: remove
-    pub fn bound_item_bounds(
-        self,
-        def_id: DefId,
-    ) -> ty::EarlyBinder<&'tcx ty::List<ty::Predicate<'tcx>>> {
-        self.item_bounds(def_id)
-    }
-
     pub fn bound_predicates_of(
         self,
         def_id: DefId,
