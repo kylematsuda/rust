@@ -2557,7 +2557,7 @@ impl<'cx, 'tcx> SelectionContext<'cx, 'tcx> {
         // obligation will normalize to `<$0 as Iterator>::Item = $1` and
         // `$1: Copy`, so we must ensure the obligations are emitted in
         // that order.
-        let predicates = tcx.bound_predicates_of(def_id);
+        let predicates = tcx.predicates_of(def_id);
         debug!(?predicates);
         assert_eq!(predicates.0.parent, None);
         let mut obligations = Vec::with_capacity(predicates.0.predicates.len());

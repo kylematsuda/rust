@@ -1298,7 +1298,7 @@ fn check_where_clauses<'tcx>(wfcx: &WfCheckingCtxt<'_, 'tcx>, span: Span, def_id
     let infcx = wfcx.infcx;
     let tcx = wfcx.tcx();
 
-    let predicates = tcx.bound_predicates_of(def_id.to_def_id());
+    let predicates = tcx.predicates_of(def_id.to_def_id());
     let generics = tcx.generics_of(def_id);
 
     let is_our_default = |def: &ty::GenericParamDef| match def.kind {
