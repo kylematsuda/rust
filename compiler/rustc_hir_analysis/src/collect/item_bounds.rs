@@ -101,12 +101,17 @@ pub(super) fn explicit_item_bounds(
     }
 }
 
-pub(super) fn item_bounds(tcx: TyCtxt<'_>, def_id: DefId) -> &'_ ty::List<ty::Predicate<'_>> {
-    tcx.mk_predicates(
-        util::elaborate_predicates(
-            tcx,
-            tcx.explicit_item_bounds(def_id).iter().map(|&(bound, _span)| bound),
-        )
-        .map(|obligation| obligation.predicate),
+pub(super) fn item_bounds(
+    tcx: TyCtxt<'_>,
+    def_id: DefId,
+) -> ty::EarlyBinder<&'_ ty::List<ty::Predicate<'_>>> {
+    ty::EarlyBinder(
+        tcx.mk_predicates(
+            util::elaborate_predicates(
+                tcx,
+                tcx.explicit_item_bounds(def_id).iter().map(|&(bound, _span)| bound),
+            )
+            .map(|obligation| obligation.predicate),
+        ),
     )
 }
