@@ -18,8 +18,8 @@ pub fn build_ptr_tys<'tcx>(
     nonnull_did: DefId,
 ) -> (Ty<'tcx>, Ty<'tcx>, Ty<'tcx>) {
     let substs = tcx.intern_substs(&[pointee.into()]);
-    let unique_ty = tcx.bound_type_of(unique_did).subst(tcx, substs);
-    let nonnull_ty = tcx.bound_type_of(nonnull_did).subst(tcx, substs);
+    let unique_ty = tcx.type_of(unique_did).subst(tcx, substs);
+    let nonnull_ty = tcx.type_of(nonnull_did).subst(tcx, substs);
     let ptr_ty = tcx.mk_imm_ptr(pointee);
 
     (unique_ty, nonnull_ty, ptr_ty)

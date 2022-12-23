@@ -283,7 +283,7 @@ impl<'tcx> TransformVisitor<'tcx> {
 
         let ty = self
             .tcx
-            .bound_type_of(self.state_adt_ref.variant(idx).fields[0].did)
+            .type_of(self.state_adt_ref.variant(idx).fields[0].did)
             .subst(self.tcx, self.state_substs);
 
         statements.extend(expand_aggregate(

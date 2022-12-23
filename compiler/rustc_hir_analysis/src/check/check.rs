@@ -432,7 +432,7 @@ fn check_opaque_meets_bounds<'tcx>(
     //
     // FIXME: Consider wrapping the hidden type in an existential `Binder` and instantiating it
     // here rather than using ReErased.
-    let hidden_ty = tcx.bound_type_of(def_id.to_def_id()).subst(tcx, substs);
+    let hidden_ty = tcx.type_of(def_id.to_def_id()).subst(tcx, substs);
     let hidden_ty = tcx.fold_regions(hidden_ty, |re, _dbi| match re.kind() {
         ty::ReErased => infcx.next_region_var(RegionVariableOrigin::MiscVariable(span)),
         _ => re,

@@ -1066,7 +1066,7 @@ impl<'tcx> TyCtxt<'tcx> {
     pub fn caller_location_ty(self) -> Ty<'tcx> {
         self.mk_imm_ref(
             self.lifetimes.re_static,
-            self.bound_type_of(self.require_lang_item(LangItem::PanicLocation, None))
+            self.type_of(self.require_lang_item(LangItem::PanicLocation, None))
                 .subst(self, self.mk_substs([self.lifetimes.re_static.into()].iter())),
         )
     }
@@ -1805,7 +1805,7 @@ impl<'tcx> TyCtxt<'tcx> {
                         ty_param.into()
                     } else {
                         assert!(has_default);
-                        self.bound_type_of(param.def_id).subst(self, substs).into()
+                        self.type_of(param.def_id).subst(self, substs).into()
                     }
                 }
             });

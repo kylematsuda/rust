@@ -640,11 +640,6 @@ impl<'tcx> TyCtxt<'tcx> {
         if visitor.found_recursion { Err(expanded_type) } else { Ok(expanded_type) }
     }
 
-    // TODO: remove
-    pub fn bound_type_of(self, def_id: DefId) -> ty::EarlyBinder<Ty<'tcx>> {
-        self.type_of(def_id)
-    }
-
     pub fn bound_trait_impl_trait_tys(
         self,
         def_id: DefId,
@@ -781,7 +776,7 @@ impl<'tcx> OpaqueTypeExpander<'tcx> {
             let expanded_ty = match self.expanded_cache.get(&(def_id, substs)) {
                 Some(expanded_ty) => *expanded_ty,
                 None => {
-                    let generic_ty = self.tcx.bound_type_of(def_id);
+                    let generic_ty = self.tcx.type_of(def_id);
                     let concrete_ty = generic_ty.subst(self.tcx, substs);
                     let expanded_ty = self.fold_ty(concrete_ty);
                     self.expanded_cache.insert((def_id, substs), expanded_ty);

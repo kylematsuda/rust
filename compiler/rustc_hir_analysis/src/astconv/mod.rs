@@ -1214,7 +1214,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
                             }
                             hir::def::DefKind::AssocConst => tcx
                                 .const_error_with_guaranteed(
-                                    tcx.bound_type_of(assoc_item_def_id)
+                                    tcx.type_of(assoc_item_def_id)
                                         .subst(tcx, projection_ty.skip_binder().substs),
                                     reported,
                                 )
@@ -1920,7 +1920,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
                     assoc_segment,
                     adt_substs,
                 );
-                let ty = tcx.bound_type_of(assoc_ty_did).subst(tcx, item_substs);
+                let ty = tcx.type_of(assoc_ty_did).subst(tcx, item_substs);
                 let ty = self.normalize_ty(span, ty);
                 return Ok((ty, DefKind::AssocTy, assoc_ty_did));
             }

@@ -224,7 +224,7 @@ impl<'cx, 'tcx> FallibleTypeFolder<'tcx> for QueryNormalizer<'cx, 'tcx> {
                             );
                         }
 
-                        let generic_ty = self.tcx().bound_type_of(def_id);
+                        let generic_ty = self.tcx().type_of(def_id);
                         let concrete_ty = generic_ty.subst(self.tcx(), substs);
                         self.anon_depth += 1;
                         if concrete_ty == ty {

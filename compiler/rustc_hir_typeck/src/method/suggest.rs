@@ -1348,8 +1348,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                     }
 
                     let range_def_id = self.tcx.require_lang_item(lang_item.unwrap(), None);
-                    let range_ty =
-                        self.tcx.bound_type_of(range_def_id).subst(self.tcx, &[actual.into()]);
+                    let range_ty = self.tcx.type_of(range_def_id).subst(self.tcx, &[actual.into()]);
 
                     let pick = self.probe_for_name(
                         Mode::MethodCall,

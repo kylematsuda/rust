@@ -1830,7 +1830,7 @@ impl<'a, 'tcx> ProbeContext<'a, 'tcx> {
         &self,
         impl_def_id: DefId,
     ) -> (ty::EarlyBinder<Ty<'tcx>>, SubstsRef<'tcx>) {
-        (self.tcx.bound_type_of(impl_def_id), self.fresh_item_substs(impl_def_id))
+        (self.tcx.type_of(impl_def_id), self.fresh_item_substs(impl_def_id))
     }
 
     fn fresh_item_substs(&self, def_id: DefId) -> SubstsRef<'tcx> {

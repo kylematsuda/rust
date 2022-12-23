@@ -1551,7 +1551,7 @@ pub(crate) fn raw_compare_const_impl<'tcx>(
 
     // Compute placeholder form of impl and trait const tys.
     let impl_ty = tcx.type_of(impl_const_item_def.to_def_id()).subst_identity();
-    let trait_ty = tcx.bound_type_of(trait_const_item_def).subst(tcx, trait_to_impl_substs);
+    let trait_ty = tcx.type_of(trait_const_item_def).subst(tcx, trait_to_impl_substs);
     let mut cause = ObligationCause::new(
         impl_c_span,
         impl_c_hir_id,

@@ -743,9 +743,9 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
         let def_kind = self.tcx.def_kind(def_id);
 
         let item_ty = if let DefKind::Variant = def_kind {
-            self.tcx.bound_type_of(self.tcx.parent(def_id))
+            self.tcx.type_of(self.tcx.parent(def_id))
         } else {
-            self.tcx.bound_type_of(def_id)
+            self.tcx.type_of(def_id)
         };
         let substs = self.fresh_substs_for_item(span, def_id);
         let ty = item_ty.subst(self.tcx, substs);
@@ -1231,7 +1231,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                             // If we have a default, then we it doesn't matter that we're not
                             // inferring the type arguments: we provide the default where any
                             // is missing.
-                            let default = tcx.bound_type_of(param.def_id);
+                            let default = tcx.type_of(param.def_id);
                             self.fcx
                                 .normalize_ty(self.span, default.subst(tcx, substs.unwrap()))
                                 .into()
@@ -1279,7 +1279,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
 
         // Substitute the values for the type parameters into the type of
         // the referenced item.
-        let ty = tcx.bound_type_of(def_id);
+        let ty = tcx.type_of(def_id);
         assert!(!substs.has_escaping_bound_vars());
         assert!(!ty.0.has_escaping_bound_vars());
         let ty_substituted = self.normalize(span, ty.subst(tcx, substs));
@@ -1290,7 +1290,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
             // type parameters, which we can infer by unifying the provided `Self`
             // with the substituted impl type.
             // This also occurs for an enum variant on a type alias.
-            let impl_ty = self.normalize(span, tcx.bound_type_of(impl_def_id).subst(tcx, substs));
+            let impl_ty = self.normalize(span, tcx.type_of(impl_def_id).subst(tcx, substs));
             match self.at(&self.misc(span), self.param_env).eq(impl_ty, self_ty) {
                 Ok(ok) => self.register_infer_ok_obligations(ok),
                 Err(_) => {

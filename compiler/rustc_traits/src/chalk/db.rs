@@ -469,7 +469,7 @@ impl<'tcx> chalk_solve::RustIrDatabase<RustInterner<'tcx>> for RustIrDatabase<'t
         let ty = self
             .interner
             .tcx
-            .bound_type_of(def_id)
+            .type_of(def_id)
             .subst(self.interner.tcx, bound_vars)
             .lower_into(self.interner);
 

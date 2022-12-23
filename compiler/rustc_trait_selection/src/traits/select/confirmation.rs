@@ -1076,7 +1076,7 @@ impl<'cx, 'tcx> SelectionContext<'cx, 'tcx> {
                 // The last field of the structure has to exist and contain type/const parameters.
                 let (tail_field, prefix_fields) =
                     def.non_enum_variant().fields.split_last().ok_or(Unimplemented)?;
-                let tail_field_ty = tcx.bound_type_of(tail_field.did);
+                let tail_field_ty = tcx.type_of(tail_field.did);
 
                 let mut unsizing_params = GrowableBitSet::new_empty();
                 for arg in tail_field_ty.0.walk() {
