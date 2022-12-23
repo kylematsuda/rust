@@ -214,7 +214,11 @@ fn clean_lifetime<'tcx>(lifetime: &hir::Lifetime, cx: &mut DocContext<'tcx>) -> 
 pub(crate) fn clean_const<'tcx>(constant: &hir::ConstArg, cx: &mut DocContext<'tcx>) -> Constant {
     let def_id = cx.tcx.hir().body_owner_def_id(constant.value.body).to_def_id();
     Constant {
-        type_: clean_middle_ty(ty::Binder::dummy(cx.tcx.type_of(def_id).subst_identity()), cx, Some(def_id)),
+        type_: clean_middle_ty(
+            ty::Binder::dummy(cx.tcx.type_of(def_id).subst_identity()),
+            cx,
+            Some(def_id),
+        ),
         kind: ConstantKind::Anonymous { body: constant.value.body },
     }
 }
@@ -1936,7 +1940,11 @@ pub(crate) fn clean_middle_field<'tcx>(field: &ty::FieldDef, cx: &mut DocContext
     clean_field_with_def_id(
         field.did,
         field.name,
-        clean_middle_ty(ty::Binder::dummy(cx.tcx.type_of(field.did).subst_identity()), cx, Some(field.did)),
+        clean_middle_ty(
+            ty::Binder::dummy(cx.tcx.type_of(field.did).subst_identity()),
+            cx,
+            Some(field.did),
+        ),
         cx,
     )
 }
@@ -2260,9 +2268,11 @@ fn clean_impl<'tcx>(
 
     let for_ = clean_ty(impl_.self_ty, cx);
     let type_alias = for_.def_id(&cx.cache).and_then(|did| match tcx.def_kind(did) {
-        DefKind::TyAlias => {
-            Some(clean_middle_ty(ty::Binder::dummy(tcx.type_of(did).subst_identity()), cx, Some(did)))
-        }
+        DefKind::TyAlias => Some(clean_middle_ty(
+            ty::Binder::dummy(tcx.type_of(did).subst_identity()),
+            cx,
+            Some(did),
+        )),
         _ => None,
     });
     let mut make_item = |trait_: Option<Path>, for_: Type, items: Vec<Item>| {

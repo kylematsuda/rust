@@ -1203,7 +1203,13 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                     }
                     (GenericParamDefKind::Const { .. }, GenericArg::Infer(inf)) => {
                         let tcx = self.fcx.tcx();
-                        self.fcx.ct_infer(tcx.type_of(param.def_id).subst_identity(), Some(param), inf.span).into()
+                        self.fcx
+                            .ct_infer(
+                                tcx.type_of(param.def_id).subst_identity(),
+                                Some(param),
+                                inf.span,
+                            )
+                            .into()
                     }
                     _ => unreachable!(),
                 }

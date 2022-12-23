@@ -872,8 +872,14 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                                                 // different from the received one
                                                 // So we avoid suggestion method with Box<Self>
                                                 // for instance
-                                                self.tcx.at(span).type_of(*def_id).subst_identity() != rcvr_ty
-                                                    && self.tcx.at(span).type_of(*def_id).subst_identity() != rcvr_ty
+                                                self.tcx.at(span).type_of(*def_id).subst_identity()
+                                                    != rcvr_ty
+                                                    && self
+                                                        .tcx
+                                                        .at(span)
+                                                        .type_of(*def_id)
+                                                        .subst_identity()
+                                                        != rcvr_ty
                                             }
                                             (Mode::Path, false, _) => true,
                                             _ => false,
@@ -893,7 +899,10 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                                     .iter()
                                     .take(limit)
                                     .map(|impl_item| {
-                                        format!("- `{}`", self.tcx.at(span).type_of(*impl_item).subst_identity())
+                                        format!(
+                                            "- `{}`",
+                                            self.tcx.at(span).type_of(*impl_item).subst_identity()
+                                        )
                                     })
                                     .collect::<Vec<_>>()
                                     .join("\n");

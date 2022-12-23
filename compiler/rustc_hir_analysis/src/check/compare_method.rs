@@ -1495,7 +1495,11 @@ fn compare_generic_param_kinds<'tcx>(
 
             let make_param_message = |prefix: &str, param: &ty::GenericParamDef| match param.kind {
                 Const { .. } => {
-                    format!("{} const parameter of type `{}`", prefix, tcx.type_of(param.def_id).subst_identity())
+                    format!(
+                        "{} const parameter of type `{}`",
+                        prefix,
+                        tcx.type_of(param.def_id).subst_identity()
+                    )
                 }
                 Type { .. } => format!("{} type parameter", prefix),
                 Lifetime { .. } => unreachable!(),

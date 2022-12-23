@@ -288,9 +288,15 @@ fn adt_drop_tys<'tcx>(
     let adt_has_dtor =
         |adt_def: ty::AdtDef<'tcx>| adt_def.destructor(tcx).map(|_| DtorType::Significant);
     // `tcx.type_of(def_id)` identical to `tcx.make_adt(def, identity_substs)`
-    drop_tys_helper(tcx, tcx.type_of(def_id).subst_identity(), tcx.param_env(def_id), adt_has_dtor, false)
-        .collect::<Result<Vec<_>, _>>()
-        .map(|components| tcx.intern_type_list(&components))
+    drop_tys_helper(
+        tcx,
+        tcx.type_of(def_id).subst_identity(),
+        tcx.param_env(def_id),
+        adt_has_dtor,
+        false,
+    )
+    .collect::<Result<Vec<_>, _>>()
+    .map(|components| tcx.intern_type_list(&components))
 }
 // If `def_id` refers to a generic ADT, the queries above and below act as if they had been handed
 // a `tcx.make_ty(def, identity_substs)` and as such it is legal to substitute the generic parameters

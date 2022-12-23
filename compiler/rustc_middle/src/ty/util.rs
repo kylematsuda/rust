@@ -603,7 +603,10 @@ impl<'tcx> TyCtxt<'tcx> {
     /// Get the type of the pointer to the static that we use in MIR.
     pub fn static_ptr_ty(self, def_id: DefId) -> Ty<'tcx> {
         // Make sure that any constants in the static's type are evaluated.
-        let static_ty = self.normalize_erasing_regions(ty::ParamEnv::empty(), self.type_of(def_id).subst_identity());
+        let static_ty = self.normalize_erasing_regions(
+            ty::ParamEnv::empty(),
+            self.type_of(def_id).subst_identity(),
+        );
 
         // Make sure that accesses to unsafe statics end up using raw pointers.
         // For thread-locals, this needs to be kept in sync with `Rvalue::ty`.

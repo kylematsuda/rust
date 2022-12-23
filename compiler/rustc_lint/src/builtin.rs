@@ -189,7 +189,11 @@ impl<'tcx> LateLintPass<'tcx> for BoxPointers {
         match it.kind {
             hir::ItemKind::Struct(ref struct_def, _) | hir::ItemKind::Union(ref struct_def, _) => {
                 for field in struct_def.fields() {
-                    self.check_heap_type(cx, field.span, cx.tcx.type_of(field.def_id).subst_identity());
+                    self.check_heap_type(
+                        cx,
+                        field.span,
+                        cx.tcx.type_of(field.def_id).subst_identity(),
+                    );
                 }
             }
             _ => (),
@@ -3056,7 +3060,8 @@ impl<'tcx> LateLintPass<'tcx> for ClashingExternDeclarations {
         if let ForeignItemKind::Fn(..) = this_fi.kind {
             let tcx = cx.tcx;
             if let Some(existing_hid) = self.insert(tcx, this_fi) {
-                let existing_decl_ty = tcx.type_of(tcx.hir().local_def_id(existing_hid)).subst_identity();
+                let existing_decl_ty =
+                    tcx.type_of(tcx.hir().local_def_id(existing_hid)).subst_identity();
                 let this_decl_ty = tcx.type_of(this_fi.owner_id).subst_identity();
                 debug!(
                     "ClashingExternDeclarations: Comparing existing {:?}: {:?} to this {:?}: {:?}",
