@@ -93,6 +93,18 @@ impl<'tcx> Value<TyCtxt<'tcx>> for Representability {
     }
 }
 
+impl<'tcx> Value<TyCtxt<'tcx>> for ty::EarlyBinder<Ty<'_>> {
+    fn from_cycle_error(tcx: TyCtxt<'tcx>, cycle: &[QueryInfo]) -> Self {
+        ty::EarlyBinder(Ty::from_cycle_error(tcx, cycle))
+    }
+}
+
+impl<'tcx> Value<TyCtxt<'tcx>> for ty::EarlyBinder<ty::Binder<'_, ty::FnSig<'_>>> {
+    fn from_cycle_error(tcx: TyCtxt<'tcx>, cycle: &[QueryInfo]) -> Self {
+        ty::EarlyBinder(ty::Binder::from_cycle_error(tcx, cycle))
+    }
+}
+
 // item_and_field_ids should form a cycle where each field contains the
 // type in the next element in the list
 pub fn recursive_type_error(
