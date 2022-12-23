@@ -1141,8 +1141,8 @@ fn fn_sig(tcx: TyCtxt<'_>, def_id: DefId) -> ty::EarlyBinder<ty::PolyFnSig<'_>> 
         }
 
         Ctor(data) | Variant(hir::Variant { data, .. }) if data.ctor().is_some() => {
-            let ty = tcx.type_of(tcx.hir().get_parent_item(hir_id));
-            let inputs = data.fields().iter().map(|f| tcx.type_of(f.def_id));
+            let ty = tcx.type_of(tcx.hir().get_parent_item(hir_id)).subst_identity();
+            let inputs = data.fields().iter().map(|f| tcx.type_of(f.def_id).subst_identity());
             ty::Binder::dummy(tcx.mk_fn_sig(
                 inputs,
                 ty,
@@ -1251,7 +1251,7 @@ fn impl_trait_ref(tcx: TyCtxt<'_>, def_id: DefId) -> Option<ty::EarlyBinder<ty::
             .of_trait
             .as_ref()
             .map(|ast_trait_ref| {
-                let selfty = tcx.type_of(def_id);
+                let selfty = tcx.type_of(def_id).subst_identity();
                 <dyn AstConv<'_>>::instantiate_mono_trait_ref(
                     &icx,
                     ast_trait_ref,

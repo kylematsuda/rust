@@ -639,7 +639,7 @@ fn construct_error<'tcx>(
     let num_params = match body_owner_kind {
         hir::BodyOwnerKind::Fn => tcx.fn_sig(def).subst_identity().inputs().skip_binder().len(),
         hir::BodyOwnerKind::Closure => {
-            let ty = tcx.type_of(def);
+            let ty = tcx.type_of(def).subst_identity();
             match ty.kind() {
                 ty::Closure(_, substs) => {
                     1 + substs.as_closure().sig().inputs().skip_binder().len()

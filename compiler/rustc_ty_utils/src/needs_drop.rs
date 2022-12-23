@@ -288,7 +288,7 @@ fn adt_drop_tys<'tcx>(
     let adt_has_dtor =
         |adt_def: ty::AdtDef<'tcx>| adt_def.destructor(tcx).map(|_| DtorType::Significant);
     // `tcx.type_of(def_id)` identical to `tcx.make_adt(def, identity_substs)`
-    drop_tys_helper(tcx, tcx.type_of(def_id), tcx.param_env(def_id), adt_has_dtor, false)
+    drop_tys_helper(tcx, tcx.type_of(def_id).subst_identity(), tcx.param_env(def_id), adt_has_dtor, false)
         .collect::<Result<Vec<_>, _>>()
         .map(|components| tcx.intern_type_list(&components))
 }
@@ -301,7 +301,7 @@ fn adt_significant_drop_tys(
 ) -> Result<&ty::List<Ty<'_>>, AlwaysRequiresDrop> {
     drop_tys_helper(
         tcx,
-        tcx.type_of(def_id), // identical to `tcx.make_adt(def, identity_substs)`
+        tcx.type_of(def_id).subst_identity(), // identical to `tcx.make_adt(def, identity_substs)`
         tcx.param_env(def_id),
         adt_consider_insignificant_dtor(tcx),
         true,

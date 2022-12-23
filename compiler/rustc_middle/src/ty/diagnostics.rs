@@ -460,7 +460,7 @@ impl<'tcx> TypeVisitor<'tcx> for IsSuggestableVisitor<'tcx> {
             Alias(Opaque, AliasTy { def_id, .. }) => {
                 let parent = self.tcx.parent(*def_id);
                 if let hir::def::DefKind::TyAlias | hir::def::DefKind::AssocTy = self.tcx.def_kind(parent)
-                    && let Alias(Opaque, AliasTy { def_id: parent_opaque_def_id, .. }) = self.tcx.type_of(parent).kind()
+                    && let Alias(Opaque, AliasTy { def_id: parent_opaque_def_id, .. }) = self.tcx.type_of(parent).subst_identity().kind()
                     && parent_opaque_def_id == def_id
                 {
                     // Okay

@@ -52,7 +52,7 @@ fn inner_resolve_instance<'tcx>(
             tcx.normalize_erasing_regions(param_env, substs),
         )
     } else {
-        let ty = tcx.type_of(def.def_id_for_type_of());
+        let ty = tcx.type_of(def.def_id_for_type_of()).subst_identity();
         let item_type = tcx.subst_and_normalize_erasing_regions(substs, param_env, ty);
 
         let def = match *item_type.kind() {

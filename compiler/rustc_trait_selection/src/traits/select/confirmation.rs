@@ -559,7 +559,7 @@ impl<'cx, 'tcx> SelectionContext<'cx, 'tcx> {
                                         ty::INNERMOST,
                                         ty::BoundVar::from_usize(bound_vars.len() - 1),
                                     ),
-                                    tcx.type_of(param.def_id),
+                                    tcx.type_of(param.def_id).subst_identity(),
                                 )
                                 .into()
                             }
@@ -1088,7 +1088,7 @@ impl<'cx, 'tcx> SelectionContext<'cx, 'tcx> {
                 // Ensure none of the other fields mention the parameters used
                 // in unsizing.
                 for field in prefix_fields {
-                    for arg in tcx.type_of(field.did).walk() {
+                    for arg in tcx.type_of(field.did).subst_identity().walk() {
                         if let Some(i) = maybe_unsizing_param_idx(arg) {
                             unsizing_params.remove(i);
                         }

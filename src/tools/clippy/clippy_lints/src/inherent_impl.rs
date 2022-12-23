@@ -68,7 +68,7 @@ impl<'tcx> LateLintPass<'tcx> for MultipleInherentImpl {
             })
         {
             for impl_id in impl_ids.iter().map(|id| id.expect_local()) {
-                match type_map.entry(cx.tcx.type_of(impl_id)) {
+                match type_map.entry(cx.tcx.type_of(impl_id).subst_identity()) {
                     Entry::Vacant(e) => {
                         // Store the id for the first impl block of this type. The span is retrieved lazily.
                         e.insert(IdOrSpan::Id(impl_id));

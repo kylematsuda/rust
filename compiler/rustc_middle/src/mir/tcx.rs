@@ -166,7 +166,7 @@ impl<'tcx> Rvalue<'tcx> {
                 tcx.mk_ty(ty::Array(operand.ty(local_decls, tcx), count))
             }
             Rvalue::ThreadLocalRef(did) => {
-                let static_ty = tcx.type_of(did);
+                let static_ty = tcx.type_of(did).subst_identity();
                 if tcx.is_mutable_static(did) {
                     tcx.mk_mut_ptr(static_ty)
                 } else if tcx.is_foreign_item(did) {

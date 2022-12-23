@@ -101,7 +101,7 @@ impl<'tcx> Instance<'tcx> {
     /// Returns the `Ty` corresponding to this `Instance`, with generic substitutions applied and
     /// lifetimes erased, allowing a `ParamEnv` to be specified for use during normalization.
     pub fn ty(&self, tcx: TyCtxt<'tcx>, param_env: ty::ParamEnv<'tcx>) -> Ty<'tcx> {
-        let ty = tcx.type_of(self.def.def_id());
+        let ty = tcx.type_of(self.def.def_id()).subst_identity();
         tcx.subst_and_normalize_erasing_regions(self.substs, param_env, ty)
     }
 
@@ -661,7 +661,7 @@ fn polymorphize<'tcx>(
     let def_id = instance.def_id();
     let upvars_ty = if tcx.is_closure(def_id) {
         Some(substs.as_closure().tupled_upvars_ty())
-    } else if tcx.type_of(def_id).is_generator() {
+    } else if tcx.type_of(def_id).subst_identity().is_generator() {
         Some(substs.as_generator().tupled_upvars_ty())
     } else {
         None

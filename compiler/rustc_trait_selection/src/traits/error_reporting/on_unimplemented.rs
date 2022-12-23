@@ -186,7 +186,7 @@ impl<'tcx> TypeErrCtxtExt<'tcx> for TypeErrCtxt<'_, 'tcx> {
             if let Some(def) = self_ty.ty_adt_def() {
                 // We also want to be able to select self's original
                 // signature with no type arguments resolved
-                flags.push((sym::_Self, Some(self.tcx.type_of(def.did()).to_string())));
+                flags.push((sym::_Self, Some(self.tcx.type_of(def.did()).subst_identity().to_string())));
             }
 
             for param in generics.params.iter() {
@@ -204,7 +204,7 @@ impl<'tcx> TypeErrCtxtExt<'tcx> for TypeErrCtxt<'_, 'tcx> {
                     if let Some(def) = param_ty.ty_adt_def() {
                         // We also want to be able to select the parameter's
                         // original signature with no type arguments resolved
-                        flags.push((name, Some(self.tcx.type_of(def.did()).to_string())));
+                        flags.push((name, Some(self.tcx.type_of(def.did()).subst_identity().to_string())));
                     }
                 }
             }
@@ -237,7 +237,7 @@ impl<'tcx> TypeErrCtxtExt<'tcx> for TypeErrCtxt<'_, 'tcx> {
                 if let Some(def) = aty.ty_adt_def() {
                     // We also want to be able to select the slice's type's original
                     // signature with no type arguments resolved
-                    flags.push((sym::_Self, Some(format!("[{}]", self.tcx.type_of(def.did())))));
+                    flags.push((sym::_Self, Some(format!("[{}]", self.tcx.type_of(def.did()).subst_identity()))));
                 }
                 if aty.is_integral() {
                     flags.push((sym::_Self, Some("[{integral}]".to_string())));
@@ -255,7 +255,7 @@ impl<'tcx> TypeErrCtxtExt<'tcx> for TypeErrCtxt<'_, 'tcx> {
                 if let Some(def) = aty.ty_adt_def() {
                     // We also want to be able to select the array's type's original
                     // signature with no type arguments resolved
-                    let def_ty = self.tcx.type_of(def.did());
+                    let def_ty = self.tcx.type_of(def.did()).subst_identity();
                     flags.push((sym::_Self, Some(format!("[{def_ty}; _]"))));
                     if let Some(n) = len {
                         flags.push((sym::_Self, Some(format!("[{def_ty}; {n}]"))));

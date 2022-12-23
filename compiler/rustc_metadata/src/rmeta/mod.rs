@@ -355,7 +355,7 @@ define_tables! {
     // As an optimization, a missing entry indicates an empty `&[]`.
     inferred_outlives_of: Table<DefIndex, LazyArray<(ty::Clause<'static>, Span)>>,
     super_predicates_of: Table<DefIndex, LazyValue<ty::GenericPredicates<'static>>>,
-    type_of: Table<DefIndex, LazyValue<Ty<'static>>>,
+    type_of: Table<DefIndex, LazyValue<ty::EarlyBinder<Ty<'static>>>>,
     variances_of: Table<DefIndex, LazyArray<ty::Variance>>,
     fn_sig: Table<DefIndex, LazyValue<ty::EarlyBinder<ty::PolyFnSig<'static>>>>,
     codegen_fn_attrs: Table<DefIndex, LazyValue<CodegenFnAttrs>>,

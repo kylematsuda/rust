@@ -82,7 +82,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
                 Res::Def(DefKind::TyParam, src_def_id) => {
                     if let Some(param_local_id) = param.def_id.as_local() {
                         let param_name = tcx.hir().ty_param_name(param_local_id);
-                        let param_type = tcx.type_of(param.def_id);
+                        let param_type = tcx.type_of(param.def_id).subst_identity();
                         if param_type.is_suggestable(tcx, false) {
                             err.span_suggestion(
                                 tcx.def_span(src_def_id),
@@ -102,7 +102,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
             (
                 GenericArg::Type(hir::Ty { kind: hir::TyKind::Array(_, len), .. }),
                 GenericParamDefKind::Const { .. },
-            ) if tcx.type_of(param.def_id) == tcx.types.usize => {
+            ) if tcx.type_of(param.def_id).subst_identity() == tcx.types.usize => {
                 let snippet = sess.source_map().span_to_snippet(tcx.hir().span(len.hir_id()));
                 if let Ok(snippet) = snippet {
                     err.span_suggestion(

@@ -83,8 +83,8 @@ pub fn overlapping_impls<'tcx>(
         (Some(a), Some(b)) => iter::zip(a.substs, b.substs)
             .all(|(arg1, arg2)| drcx.generic_args_may_unify(arg1, arg2)),
         (None, None) => {
-            let self_ty1 = tcx.type_of(impl1_def_id);
-            let self_ty2 = tcx.type_of(impl2_def_id);
+            let self_ty1 = tcx.type_of(impl1_def_id).subst_identity();
+            let self_ty2 = tcx.type_of(impl2_def_id).subst_identity();
             drcx.types_may_unify(self_ty1, self_ty2)
         }
         _ => bug!("unexpected impls: {impl1_def_id:?} {impl2_def_id:?}"),

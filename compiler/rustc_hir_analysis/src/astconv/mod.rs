@@ -440,7 +440,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
                         .into()
                     }
                     (&GenericParamDefKind::Const { .. }, hir::GenericArg::Infer(inf)) => {
-                        let ty = tcx.at(self.span).type_of(param.def_id);
+                        let ty = tcx.at(self.span).type_of(param.def_id).subst_identity();
                         if self.astconv.allow_ty_infer() {
                             self.astconv.ct_infer(ty, Some(param), inf.span).into()
                         } else {
@@ -501,7 +501,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
                         }
                     }
                     GenericParamDefKind::Const { has_default } => {
-                        let ty = tcx.at(self.span).type_of(param.def_id);
+                        let ty = tcx.at(self.span).type_of(param.def_id).subst_identity();
                         if ty.references_error() {
                             return tcx.const_error(ty).into();
                         }
@@ -2484,7 +2484,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
                 // `Self` in impl (we know the concrete type).
                 assert_eq!(opt_self_ty, None);
                 // Try to evaluate any array length constants.
-                let ty = tcx.at(span).type_of(def_id);
+                let ty = tcx.at(span).type_of(def_id).subst_identity();
                 let span_of_impl = tcx.span_of_impl(def_id);
                 self.prohibit_generics(path.segments.iter(), |err| {
                     let def_id = match *ty.kind() {
@@ -2718,7 +2718,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
                     None,
                     ty::BoundConstness::NotConst,
                 );
-                EarlyBinder(self.normalize_ty(span, tcx.at(span).type_of(def_id)))
+                EarlyBinder(self.normalize_ty(span, tcx.at(span).type_of(def_id).subst_identity()))
                     .subst(tcx, substs)
             }
             hir::TyKind::Array(ref ty, ref length) => {
@@ -2733,7 +2733,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
                 self.normalize_ty(ast_ty.span, array_ty)
             }
             hir::TyKind::Typeof(ref e) => {
-                let ty_erased = tcx.type_of(e.def_id);
+                let ty_erased = tcx.type_of(e.def_id).subst_identity();
                 let ty = tcx.fold_regions(ty_erased, |r, _| {
                     if r.is_erased() { tcx.lifetimes.re_static } else { r }
                 });

@@ -186,7 +186,7 @@ impl<'tcx> InherentCollect<'tcx> {
             return;
         };
 
-        let self_ty = self.tcx.type_of(item.owner_id);
+        let self_ty = self.tcx.type_of(item.owner_id).subst_identity();
         match *self_ty.kind() {
             ty::Adt(def, _) => {
                 self.check_def_id(item, self_ty, def.did());

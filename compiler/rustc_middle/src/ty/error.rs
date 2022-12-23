@@ -888,7 +888,7 @@ fn foo(&self) -> Self::T { String::new() }
                             if let hir::Defaultness::Default { has_value: true } =
                                 self.impl_defaultness(item.id.owner_id)
                             {
-                                if self.type_of(item.id.owner_id) == found {
+                                if self.type_of(item.id.owner_id).subst_identity() == found {
                                     diag.span_label(
                                         item.span,
                                         "associated type defaults can't be assumed inside the \
@@ -908,7 +908,7 @@ fn foo(&self) -> Self::T { String::new() }
             })) => {
                 for item in &items[..] {
                     if let hir::AssocItemKind::Type = item.kind {
-                        if self.type_of(item.id.owner_id) == found {
+                        if self.type_of(item.id.owner_id).subst_identity() == found {
                             diag.span_label(item.span, "expected this associated type");
                             return true;
                         }

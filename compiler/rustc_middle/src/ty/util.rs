@@ -363,7 +363,7 @@ impl<'tcx> TyCtxt<'tcx> {
         let drop_trait = self.lang_items().drop_trait()?;
         self.ensure().coherent_trait(drop_trait);
 
-        let ty = self.type_of(adt_did);
+        let ty = self.type_of(adt_did).subst_identity();
         let (did, constness) = self.find_map_relevant_impl(drop_trait, ty, |impl_did| {
             if let Some(item_id) = self.associated_item_def_ids(impl_did).first() {
                 if validate(self, impl_did).is_ok() {
@@ -416,12 +416,12 @@ impl<'tcx> TyCtxt<'tcx> {
         // <P1, P2, P0>, and then look up which of the impl substs refer to
         // parameters marked as pure.
 
-        let impl_substs = match *self.type_of(impl_def_id).kind() {
+        let impl_substs = match *self.type_of(impl_def_id).subst_identity().kind() {
             ty::Adt(def_, substs) if def_ == def => substs,
             _ => bug!(),
         };
 
-        let item_substs = match *self.type_of(def.did()).kind() {
+        let item_substs = match *self.type_of(def.did()).subst_identity().kind() {
             ty::Adt(def_, substs) if def_ == def => substs,
             _ => bug!(),
         };
@@ -603,7 +603,7 @@ impl<'tcx> TyCtxt<'tcx> {
     /// Get the type of the pointer to the static that we use in MIR.
     pub fn static_ptr_ty(self, def_id: DefId) -> Ty<'tcx> {
         // Make sure that any constants in the static's type are evaluated.
-        let static_ty = self.normalize_erasing_regions(ty::ParamEnv::empty(), self.type_of(def_id));
+        let static_ty = self.normalize_erasing_regions(ty::ParamEnv::empty(), self.type_of(def_id).subst_identity());
 
         // Make sure that accesses to unsafe statics end up using raw pointers.
         // For thread-locals, this needs to be kept in sync with `Rvalue::ty`.
@@ -637,8 +637,9 @@ impl<'tcx> TyCtxt<'tcx> {
         if visitor.found_recursion { Err(expanded_type) } else { Ok(expanded_type) }
     }
 
+    // TODO: remove
     pub fn bound_type_of(self, def_id: DefId) -> ty::EarlyBinder<Ty<'tcx>> {
-        ty::EarlyBinder(self.type_of(def_id))
+        self.type_of(def_id)
     }
 
     pub fn bound_trait_impl_trait_tys(
@@ -742,8 +743,9 @@ impl<'tcx> TyCtxt<'tcx> {
 }
 
 impl<'tcx> TyCtxtAt<'tcx> {
+    // TODO: remove
     pub fn bound_type_of(self, def_id: DefId) -> ty::EarlyBinder<Ty<'tcx>> {
-        ty::EarlyBinder(self.type_of(def_id))
+        self.type_of(def_id)
     }
 }
 

@@ -336,7 +336,7 @@ impl<'a, 'tcx> LinkCollector<'a, 'tcx> {
         let ty_res = self.resolve_path(&path, TypeNS, item_id, module_id).ok_or_else(no_res)?;
 
         match ty_res {
-            Res::Def(DefKind::Enum, did) => match tcx.type_of(did).kind() {
+            Res::Def(DefKind::Enum, did) => match tcx.type_of(did).subst_identity().kind() {
                 ty::Adt(def, _) if def.is_enum() => {
                     if let Some(field) = def.all_fields().find(|f| f.name == variant_field_name) {
                         Ok((ty_res, field.did))
@@ -519,7 +519,7 @@ impl<'a, 'tcx> LinkCollector<'a, 'tcx> {
     /// This is used for resolving type aliases.
     fn def_id_to_res(&self, ty_id: DefId) -> Option<Res> {
         use PrimitiveType::*;
-        Some(match *self.cx.tcx.type_of(ty_id).kind() {
+        Some(match *self.cx.tcx.type_of(ty_id).subst_identity().kind() {
             ty::Bool => Res::Primitive(Bool),
             ty::Char => Res::Primitive(Char),
             ty::Int(ity) => Res::Primitive(ity.into()),
@@ -619,7 +619,7 @@ impl<'a, 'tcx> LinkCollector<'a, 'tcx> {
                 debug!("looking for associated item named {} for item {:?}", item_name, did);
                 // Checks if item_name is a variant of the `SomeItem` enum
                 if ns == TypeNS && def_kind == DefKind::Enum {
-                    match tcx.type_of(did).kind() {
+                    match tcx.type_of(did).subst_identity().kind() {
                         ty::Adt(adt_def, _) => {
                             for variant in adt_def.variants() {
                                 if variant.name == item_name {
@@ -653,7 +653,7 @@ impl<'a, 'tcx> LinkCollector<'a, 'tcx> {
                     // something like [`ambi_fn`](<SomeStruct as SomeTrait>::ambi_fn)
                     .or_else(|| {
                         resolve_associated_trait_item(
-                            tcx.type_of(did),
+                            tcx.type_of(did).subst_identity(),
                             module_id,
                             item_name,
                             ns,
@@ -686,7 +686,7 @@ impl<'a, 'tcx> LinkCollector<'a, 'tcx> {
                 // they also look like associated items (`module::Type::Variant`),
                 // because they are real Rust syntax (unlike the intra-doc links
                 // field syntax) and are handled by the compiler's resolver.
-                let def = match tcx.type_of(did).kind() {
+                let def = match tcx.type_of(did).subst_identity().kind() {
                     ty::Adt(def, _) if !def.is_enum() => def,
                     _ => return None,
                 };

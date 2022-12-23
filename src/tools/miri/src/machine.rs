@@ -873,7 +873,7 @@ impl<'mir, 'tcx> Machine<'mir, 'tcx> for MiriMachine<'mir, 'tcx> {
             };
             let (shim_size, shim_align, _kind) = ecx.get_alloc_info(alloc_id);
             let extern_decl_layout =
-                ecx.tcx.layout_of(ty::ParamEnv::empty().and(ecx.tcx.type_of(def_id))).unwrap();
+                ecx.tcx.layout_of(ty::ParamEnv::empty().and(ecx.tcx.type_of(def_id).subst_identity())).unwrap();
             if extern_decl_layout.size != shim_size || extern_decl_layout.align.abi != shim_align {
                 throw_unsup_format!(
                     "`extern` static `{name}` from crate `{krate}` has been declared \

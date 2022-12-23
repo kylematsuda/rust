@@ -745,7 +745,7 @@ pub trait PrettyPrinter<'tcx>:
                 match self.tcx().def_kind(parent) {
                     DefKind::TyAlias | DefKind::AssocTy => {
                         if let ty::Alias(ty::Opaque, ty::AliasTy { def_id: d, .. }) =
-                            *self.tcx().type_of(parent).kind()
+                            *self.tcx().type_of(parent).subst_identity().kind()
                         {
                             if d == def_id {
                                 // If the type alias directly starts with the `impl` of the

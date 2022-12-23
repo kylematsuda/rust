@@ -385,7 +385,7 @@ impl<'tcx> SaveContext<'tcx> {
         let qualname = format!("::{}::{}", self.tcx.def_path_str(scope_def_id), field.ident);
         filter!(self.span_utils, field.ident.span);
         let field_def_id = self.tcx.hir().local_def_id(field.hir_id).to_def_id();
-        let typ = self.tcx.type_of(field_def_id).to_string();
+        let typ = self.tcx.type_of(field_def_id).subst_identity().to_string();
 
         let id = id_from_def_id(field_def_id);
         let span = self.span_from_span(field.ident.span);
