@@ -3,7 +3,6 @@
 use crate::middle::codegen_fn_attrs::CodegenFnAttrFlags;
 use crate::mir;
 use crate::ty::layout::IntegerExt;
-use crate::ty::query::TyCtxtAt;
 use crate::ty::{
     self, DefIdTree, FallibleTypeFolder, Ty, TyCtxt, TypeFoldable, TypeFolder, TypeSuperFoldable,
     TypeVisitable,
@@ -737,13 +736,6 @@ impl<'tcx> TyCtxt<'tcx> {
             }
         }
         (generator_layout, generator_saved_local_names)
-    }
-}
-
-impl<'tcx> TyCtxtAt<'tcx> {
-    // TODO: remove
-    pub fn bound_type_of(self, def_id: DefId) -> ty::EarlyBinder<Ty<'tcx>> {
-        self.type_of(def_id)
     }
 }
 

@@ -488,9 +488,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
                             self.astconv
                                 .normalize_ty(
                                     self.span,
-                                    tcx.at(self.span)
-                                        .bound_type_of(param.def_id)
-                                        .subst(tcx, substs),
+                                    tcx.at(self.span).type_of(param.def_id).subst(tcx, substs),
                                 )
                                 .into()
                         } else if infer_args {
@@ -1252,7 +1250,7 @@ impl<'o, 'tcx> dyn AstConv<'tcx> + 'o {
         item_segment: &hir::PathSegment<'_>,
     ) -> Ty<'tcx> {
         let substs = self.ast_path_substs_for_ty(span, did, item_segment);
-        self.normalize_ty(span, self.tcx().at(span).bound_type_of(did).subst(self.tcx(), substs))
+        self.normalize_ty(span, self.tcx().at(span).type_of(did).subst(self.tcx(), substs))
     }
 
     fn conv_object_ty_poly_trait_ref(
